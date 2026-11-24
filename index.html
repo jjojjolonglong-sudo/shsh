@@ -10,7 +10,7 @@
 <style>
 /* 테마: 'Club Heartbreak' 포스터 — 회색기 핑크 벽에 붙은 연두빛 미색 포스터, 파란 잉크와 선, 코랄 핑크 하트.
    키치 포인트는 세 가지만: 포스터식 파란 테두리 칸, 코랄 딱딱한 그림자, 살짝 기울어진 스티커 태그 */
-:root{--wall:#d1b6ad;--paper:#e9e6cf;--card:#f4f2e3;--blue:#2a60c6;--ink:#1c3a80;--mut:#7584ad;--ln:rgba(42,96,198,.26);--coral:#ef7f86;--pale:#f8dcd8;--top:56px;--hd:46px;--grain:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 .16 0 0 0 0 .38 0 0 0 0 .78 0 0 0 .1 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>")}
+:root{--wall:#d1b6ad;--paper:#e9e6cf;--card:#f4f2e3;--blue:#2a60c6;--ink:#1c3a80;--mut:#7584ad;--ln:rgba(42,96,198,.26);--coral:#ef7f86;--pale:#f8dcd8;--hl:#f5c3bf;--top:56px;--hd:46px;--grain:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 .16 0 0 0 0 .38 0 0 0 0 .78 0 0 0 .1 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>")}
 [hidden]{display:none!important}
 *{box-sizing:border-box;border-radius:0}
 html,body{overscroll-behavior:none}
@@ -71,10 +71,12 @@ label{display:block;font-size:12px;font-weight:700;color:var(--blue);margin:16px
 .wr .t{font-weight:700;overflow-wrap:anywhere}
 .wr .t small{display:block;font-weight:400;font-size:12px;color:var(--mut);margin-top:1px}
 .wr .l{font-size:12.5px;text-align:right;font-variant-numeric:tabular-nums}
-.chips{display:flex;flex-wrap:wrap;gap:4px 3px}
-.chip{font-size:11.5px;line-height:18px;padding:0 8px;border:1px solid var(--coral);background:var(--pale);color:var(--ink);border-radius:999px;cursor:pointer;white-space:nowrap;display:inline-block}
-.chip.on{background:var(--coral);border-color:var(--blue);font-weight:700}
-@media(hover:hover){.chip:hover{border-color:var(--blue)}}
+.chips{display:flex;flex-wrap:wrap;gap:3px 4px}
+.chip{font-size:12px;line-height:20px;padding:0 5px;color:var(--ink);cursor:pointer;white-space:nowrap;display:inline-block;position:relative;isolation:isolate}
+/* 형광펜 밑줄: 글자 아래쪽 절반을 지나가는 평행사변형 */
+.chip::before{content:'';position:absolute;z-index:-1;left:1px;right:1px;bottom:2px;height:58%;background:var(--hl);transform:skewX(-18deg)}
+.chip.on{font-weight:700}.chip.on::before{background:var(--coral)}
+@media(hover:hover){.chip:hover::before{background:#f1a9a6}.chip.on:hover::before{background:var(--coral)}}
 /* 작품 — 블록 (작은 포스터 카드) */
 .wb{display:grid;grid-template-columns:repeat(auto-fill,minmax(176px,1fr));gap:14px 12px;padding:14px 16px 18px}
 .wc{background:var(--card);border:1.5px solid var(--blue);box-shadow:3px 3px 0 var(--coral);padding:9px 10px 10px;cursor:pointer;display:flex;flex-direction:column;gap:4px;min-height:104px}
@@ -114,7 +116,12 @@ label{display:block;font-size:12px;font-weight:700;color:var(--blue);margin:16px
 .tedit input{height:28px;padding:2px 7px;background:var(--card)}
 .tedit button{height:28px;padding:0 9px;font-size:12px;flex:none}
 .tedit .icb{width:28px;height:28px;flex:none}.tedit .icb svg{width:15px;height:15px}
-.tr .tedit{grid-column:1/4}
+.tr .tedit,.tr .mg{grid-column:1/4}
+.mg{display:flex;flex-wrap:wrap;gap:6px;align-items:center;font-size:12.5px;flex:1;min-width:0}
+.mg>span{color:var(--ink)}.mg>span:first-child{flex:1 0 100%}.mg>span b{font-weight:800}
+.mg .mgs{flex:1 1 140px;min-width:0}.mg .mgs .pk-in,.mg .mgs select{height:28px;padding:2px 7px}
+.mg button{height:28px;padding:0 9px;font-size:12px;flex:none}
+.icb.tx{font-size:15px;font-weight:700}
 .nt{display:flex;gap:6px;padding:10px 12px 10px 16px;border-bottom:1px solid var(--ln)}
 .nt input{height:30px;padding:3px 8px}
 .nt button{height:30px;padding:0 10px;font-size:12px}
@@ -133,9 +140,10 @@ label{display:block;font-size:12px;font-weight:700;color:var(--blue);margin:16px
 .ti2{position:relative}
 .tbx{display:flex;flex-wrap:wrap;gap:5px 4px;align-items:center;background:var(--card);border:1px solid rgba(42,96,198,.45);padding:6px 7px;min-height:40px;cursor:text}
 .tbx:focus-within{border-color:var(--blue)}
-.tbx .chip{cursor:default;display:inline-flex;align-items:center;padding-right:0;line-height:22px}
-.tbx .chip.nw{border-style:dashed;background:var(--card)}
-.tbx .chip button{border:0;background:none;color:var(--ink);padding:0 7px 0 4px;line-height:20px;font-size:13px}
+.tbx .chip{cursor:default;display:inline-flex;align-items:center;padding-right:0;line-height:24px;font-size:13px}
+.tbx .chip.nw::before{background:none;border-bottom:1.5px dashed var(--coral);height:40%}
+.tbx .chip button{border:0;background:none;color:var(--mut);padding:0 5px 0 3px;line-height:20px;font-size:13px}
+@media(hover:hover){.tbx .chip button:hover{color:var(--ink)}}
 .ef .tbx input{border:0;background:none;padding:2px 3px;flex:1;min-width:90px;width:auto;height:auto}
 .tbx input:focus-visible{outline:0}
 .tls,.pk-ls{background:var(--card)!important;color:var(--ink)!important;border:1.5px solid var(--blue)!important;box-shadow:3px 3px 0 var(--coral)!important}
@@ -188,7 +196,7 @@ label{display:block;font-size:12px;font-weight:700;color:var(--blue);margin:16px
 <script>
 const $=s=>document.querySelector(s),E=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const LSV='shsh:view';
-const S={works:[],tags:[],refs:[],wt:new Map(),ft:null,view:{w:'t',t:'b'},ed:null,et:null,newT:false,wy:0};
+const S={works:[],tags:[],refs:[],wt:new Map(),ft:null,view:{w:'t',t:'b'},ed:null,et:null,mg:false,newT:false,wy:0};
 try{Object.assign(S.view,JSON.parse(localStorage.getItem(LSV)||'{}'))}catch(e){}
 let toastT;function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('on');clearTimeout(toastT);toastT=setTimeout(()=>t.classList.remove('on'),2400)}
 const uid=()=>Core.ses()?.user?.id;
@@ -235,7 +243,8 @@ function RW(){const ph=$('#wph');
 function RT(){const T=sortT(),b=$('#tb');$('#tn').textContent=S.tags.length;segOn();
  const nt=S.newT?`<div class="nt"><input id="ntin" placeholder="새 태그 이름" autocomplete="off"><button class="bt" data-a="ntx">취소</button><button class="pri" data-a="ntok">추가</button></div>`:'';
  if(!S.tags.length){b.innerHTML=nt+`<div class="emp">${heartSvg}아직 태그가 없어요.<br>작품을 쓸 때 태그를 치고 엔터를 누르면 생겨요.</div>`;return}
- const ted=t=>`<span class="tedit"><input id="tein" value="${E(t.name)}" autocomplete="off"><button class="bt icb" data-a="trm" title="태그 삭제" aria-label="태그 삭제">${trashSvg}</button><button class="bt" data-a="tx">취소</button><button class="pri" data-a="tok">저장</button></span>`;
+ const ted=t=>S.mg?`<span class="mg"><span>‘<b>${E(t.name)}</b>’ 작품 ${cnt(t)}개를</span><span class="mgs"><select id="mg-to"><option value="">합칠 태그 고르기</option>${sortT().filter(x=>x.id!==t.id).map(x=>`<option value="${x.id}">${E(x.name)} (${cnt(x)})</option>`).join('')}</select></span><span>에</span><button class="bt" data-a="mgx">취소</button><button class="pri" data-a="mgo">합치기</button></span>`
+  :`<span class="tedit"><input id="tein" value="${E(t.name)}" autocomplete="off"><button class="bt icb tx" data-a="mg" title="다른 태그에 합치기" aria-label="다른 태그에 합치기">⇄</button><button class="bt icb" data-a="trm" title="태그 삭제" aria-label="태그 삭제">${trashSvg}</button><button class="bt" data-a="tx">취소</button><button class="pri" data-a="tok">저장</button></span>`;
  const ttl=w=>E(w.title||'(제목 없음)');
  if(S.view.t==='t')b.innerHTML=nt+`<div class="tr hd"><span>태그</span><span style="text-align:right">수</span><span>작품</span></div>`+T.map(t=>{const W=worksOf(t);
    if(S.et===t.id)return `<div class="tr">${ted(t)}</div>`;
@@ -243,14 +252,15 @@ function RT(){const T=sortT(),b=$('#tb');$('#tn').textContent=S.tags.length;segO
  else b.innerHTML=nt+`<div class="tbk">`+T.map(t=>{const W=worksOf(t);
    const head=S.et===t.id?`<div class="h ing">${ted(t)}</div>`:`<div class="h"><button class="nm${S.ft===t.id?' on':''}" data-ft="${t.id}">${E(t.name)}</button><span class="c">${W.length}</span><button class="ed" data-et="${t.id}" title="태그 고치기" aria-label="태그 고치기">✎</button></div>`;
    return `<div class="tb2${S.ft===t.id&&S.et!==t.id?' on':''}">${head}${W.length?`<ul>${W.map(w=>`<li><span class="wl" data-w="${w.id}">${ttl(w)}</span><small>${fmtD(w.pub_date)}</small></li>`).join('')}</ul>`:'<div class="z">이 태그를 단 작품이 없어요</div>'}</div>`}).join('')+`</div>`;
- const ti=$('#tein');if(ti&&document.activeElement!==ti){ti.focus();ti.select()}}
+ const ti=$('#tein');if(ti&&document.activeElement!==ti){ti.focus();ti.select()}
+ const mt=$('#mg-to');if(mt&&window.Pick){Pick.enhance(mt,{placeholder:'합칠 태그 고르기'});setTimeout(()=>mt.parentNode.querySelector('.pk-in')?.focus(),0)}}
 
 /* ---------- 누르기 ---------- */
 $('#grid').addEventListener('click',async e=>{const t=e.target;
  const sg=t.closest('.seg [data-m]');if(sg){S.view[sg.parentNode.dataset.v]=sg.dataset.m;try{localStorage.setItem(LSV,JSON.stringify(S.view))}catch(x){}R();return}
  if(t.closest('#we'))return;
  const f=t.closest('[data-ft]');if(f){S.ft=S.ft===f.dataset.ft?null:f.dataset.ft;if(S.ed)RT();else R();return}
- const et=t.closest('[data-et]');if(et){S.et=et.dataset.et;S.newT=false;RT();return}
+ const et=t.closest('[data-et]');if(et){S.et=et.dataset.et;S.newT=false;S.mg=false;RT();return}
  const w=t.closest('[data-w]');if(w){openEd(w.dataset.w);return}
  const a=t.closest('[data-a]')?.dataset.a;if(!a)return;
  if(a==='unf'){S.ft=null;R()}
@@ -260,40 +270,55 @@ $('#grid').addEventListener('click',async e=>{const t=e.target;
  if(a==='rm')delWork();
  if(a==='ntx'){S.newT=false;RT()}
  if(a==='ntok')addTagFromRow();
- if(a==='tx'){S.et=null;RT()}
+ if(a==='tx'){S.et=null;S.mg=false;RT()}
+ if(a==='mg'){S.mg=true;RT()}
+ if(a==='mgx'){S.mg=false;RT()}
+ if(a==='mgo')mergeGo();
  if(a==='tok')saveTagName();
  if(a==='trm')delTag();
 });
 $('#grid').addEventListener('keydown',e=>{if(e.isComposing)return;
  if(e.target.id==='ntin'){if(e.key==='Enter'){e.preventDefault();addTagFromRow()}if(e.key==='Escape'){S.newT=false;RT()}}
  if(e.target.id==='tein'){if(e.key==='Enter'){e.preventDefault();saveTagName()}if(e.key==='Escape'){S.et=null;RT()}}});
-$('#addT').onclick=()=>{S.newT=true;S.et=null;RT();$('#ntin')?.focus()};
+$('#addT').onclick=()=>{S.newT=true;S.et=null;S.mg=false;RT();$('#ntin')?.focus()};
 async function addTagFromRow(){const i=$('#ntin'),n=i.value.trim();if(!n)return;
  if(S.tags.some(t=>t.name.toLowerCase()===n.toLowerCase())){toast('이미 있는 태그예요');i.select();return}
  try{const r=await ins('shsh_tag',{name:n});S.tags.push(r);RT();const j=$('#ntin');j&&j.focus()}catch(x){toast('만들지 못했어요: '+x.message)}}
 async function saveTagName(){const t=tById(S.et),v=$('#tein').value.trim();if(!t)return;
  if(!v){toast('이름을 입력해 주세요');return}
- if(v!==t.name){if(S.tags.some(x=>x.id!==t.id&&x.name.toLowerCase()===v.toLowerCase())){toast('같은 이름의 태그가 이미 있어요');return}
+ if(v!==t.name){const same=S.tags.find(x=>x.id!==t.id&&x.name.toLowerCase()===v.toLowerCase());
+  if(same){if(!confirm(`‘${same.name}’ 태그가 이미 있어요. 하나로 합칠까요?\n‘${t.name}’을 단 작품 ${cnt(t)}개가 ‘${same.name}’으로 옮겨지고, ‘${t.name}’은 없어져요.`))return;
+   try{const mv=await tagMerge(t.id,same.id);S.et=null;R();if(S.ed)drawTbx();toast(mv?`합쳤어요 · ${mv}개 작품을 새로 연결했어요`:'합쳤어요')}catch(x){toast('합치지 못했어요: '+x.message)}return}
   try{await q('shsh_tag?id=eq.'+t.id,{method:'PATCH',body:JSON.stringify({name:v,updated_at:new Date().toISOString()})});t.name=v}catch(x){toast('저장하지 못했어요: '+x.message);return}}
  S.et=null;R();if(S.ed)drawTbx()}
+/* 합치기(lvlv 키워드 합치기와 같은 방식): id 태그를 단 작품을 모두 toId로 옮기고(이미 달려 있으면 그대로), id 태그는 지워요 */
+async function tagMerge(id,toId){const mv=[];S.wt.forEach((s,wid)=>{if(s.has(id)&&!s.has(toId))mv.push(wid)});
+ if(mv.length)await q('shsh_work_tag',{method:'POST',headers:{Prefer:'return=minimal'},body:JSON.stringify(mv.map(work_id=>({work_id,tag_id:toId,user_id:uid()})))});
+ await q('shsh_tag?id=eq.'+id,{method:'DELETE'});      /* 연결은 태그와 함께 지워져요 */
+ S.wt.forEach(s=>{if(s.has(id)){s.delete(id);s.add(toId)}});S.tags=S.tags.filter(x=>x.id!==id);if(S.ft===id)S.ft=toId;
+ if(S.ed){const sw=a=>[...new Set(a.map(x=>x===id?toId:x))];S.ed.tags=sw(S.ed.tags);S.ed.o.tags=sw(S.ed.o.tags)}
+ return mv.length}
+async function mergeGo(){const a=tById(S.et),z=tById($('#mg-to')?.value);if(!a)return;if(!z){toast('합칠 태그를 골라 주세요');return}
+ const n=cnt(a);if(!confirm(`‘${a.name}’을 ‘${z.name}’에 합칠까요?\n‘${a.name}’을 단 작품 ${n}개가 ‘${z.name}’으로 옮겨지고, ‘${a.name}’은 없어져요.`))return;
+ try{const mv=await tagMerge(a.id,z.id);S.et=null;S.mg=false;R();if(S.ed)drawTbx();toast(`합쳤어요 · ${n}개 중 ${mv}개를 새로 연결했어요 (나머지는 이미 달려 있었어요)`)}catch(x){toast('합치지 못했어요: '+x.message)}}
 async function delTag(){const t=tById(S.et);if(!t)return;const n=cnt(t);
  if(!confirm(`태그 「${t.name}」을 지울까요?${n?`\n작품 ${n}개에서 이 태그가 빠져요(작품은 그대로).`:''}`))return;
  try{await q('shsh_tag?id=eq.'+t.id,{method:'DELETE'});S.tags=S.tags.filter(x=>x.id!==t.id);S.wt.forEach(s=>s.delete(t.id));if(S.ft===t.id)S.ft=null;
-  if(S.ed){S.ed.tags=S.ed.tags.filter(x=>x!==t.id);S.ed.orig=edSnap(readEd())}S.et=null;R();if(S.ed)drawTbx()}catch(x){toast('지우지 못했어요: '+x.message)}}
+  if(S.ed){S.ed.tags=S.ed.tags.filter(x=>x!==t.id);S.ed.o.tags=S.ed.o.tags.filter(x=>x!==t.id)}S.et=null;R();if(S.ed)drawTbx()}catch(x){toast('지우지 못했어요: '+x.message)}}
 
 /* ---------- 작품 등록·수정 (작품 영역 안, 취소하면 아무것도 저장 안 됨) ---------- */
 /* S.ed = 고치는 중인 사본. tags 안의 {n:이름}은 저장할 때 새로 만들 태그, 작가·출판사의 'new:이름'도 저장할 때 만들어요 */
-const edSnap=d=>JSON.stringify([d.title,d.pub_date,d.length,d.author_id,d.publisher_id,d.tags.map(x=>x.n?'+'+x.n:x)]);
+const edSnap=d=>JSON.stringify([d.title,d.pub_date||null,d.length,d.author_id||null,d.publisher_id||null,[...new Set(d.tags.map(x=>x.n?'+'+x.n.toLowerCase():x))].sort()]);
 function readEd(){const d=S.ed,f=$('#we');if(!d||!f.querySelector('.ti'))return d;
  d.title=f.querySelector('.ti').value;d.pub_date=f.querySelector('[data-f=pub_date]').value||null;d.length=f.querySelector('[data-f=length]').value;
  d.author_id=f.querySelector('#eA').value||null;d.publisher_id=f.querySelector('#eP').value||null;return d}
-const dirty=()=>!!S.ed&&edSnap(readEd())!==S.ed.orig;
+const dirty=()=>!!S.ed&&edSnap(readEd())!==edSnap(S.ed.o);
 function openEd(id){if(S.ed&&S.ed.id===id&&id)return;
  if(dirty()&&!confirm('저장하지 않은 내용이 있어요. 버리고 넘어갈까요?'))return;
  const w=id?wById(id):null;if(id&&!w)return;
  if(!S.ed)S.wy=narrow()?scrollY:$('#wb').scrollTop;
  S.ed={id:w?w.id:null,title:w?w.title:'',pub_date:w?w.pub_date:null,length:w&&w.length!=null?fmtL(w.length):'',author_id:w?w.author_id:null,publisher_id:w?w.publisher_id:null,
-  tags:w?tagsOf(w).map(t=>t.id):(S.ft?[S.ft]:[])};S.ed.orig=edSnap(S.ed);S.et=null;
+  tags:w?tagsOf(w).map(t=>t.id):(S.ft?[S.ft]:[])};S.ed.o=JSON.parse(JSON.stringify(S.ed));S.et=null;S.mg=false;
  $('#wb').hidden=true;$('#we').hidden=false;$('#wpf').hidden=false;RW();drawEd();
  $('#we').scrollTop=0;if(narrow())scrollTo(0,$('#pw').getBoundingClientRect().top+scrollY-$('.top').offsetHeight);
  if(!id)setTimeout(()=>$('#we .ti')?.focus(),20)}
