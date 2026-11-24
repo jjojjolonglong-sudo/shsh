@@ -52,6 +52,9 @@ label{display:block;font-size:12px;font-weight:700;color:var(--blue);margin:16px
 .pane+.pane{border-left:1.5px solid var(--blue)}
 .ph{flex:none;height:var(--hd);display:flex;align-items:center;gap:8px;padding:0 12px 0 16px;border-bottom:1.5px solid var(--blue)}
 .ph h2{margin:0;font-size:15px;font-weight:800;color:var(--blue)}
+/* 작품 ⇄ 태그 스위치: 넓은 화면에선 그냥 제목처럼 보이고 눌러도 아무 일 없음 */
+.sw{display:flex;align-items:center;gap:8px;border:0;background:none;padding:0;color:inherit;cursor:default;font:inherit}
+.sw i{display:none}
 .ph .n{font-size:11.5px;font-weight:800;color:var(--ink);background:var(--coral);padding:0 7px;line-height:19px;border-radius:999px;font-variant-numeric:tabular-nums}
 .ph .flt{display:inline-flex;align-items:center;font-size:12px;font-weight:700;color:var(--ink);background:var(--pale);border:1px solid var(--coral);border-radius:999px;padding:0 0 0 9px;height:24px;max-width:150px}
 .ph .flt span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
@@ -161,7 +164,11 @@ label{display:block;font-size:12px;font-weight:700;color:var(--blue);margin:16px
  .top{position:sticky;top:0;z-index:5;background:var(--paper) var(--grain);padding-left:14px}
  .sub{display:none}
  #grid{display:block;padding-bottom:calc(52px + env(safe-area-inset-bottom,0px))}
- .pane+.pane{border-left:0;border-top:4px double var(--blue);margin-top:22px}
+ .pane+.pane{border-left:0}
+ #grid[data-p=w] #pt,#grid[data-p=t] #pw{display:none}
+ .sw{cursor:pointer;height:28px;padding:0 9px 0 10px;border:1.5px solid var(--blue);background:var(--card);box-shadow:2px 2px 0 var(--coral)}
+ .sw:active{transform:translate(1px,1px);box-shadow:1px 1px 0 var(--coral)}
+ .sw i{display:block;font-style:normal;font-weight:800;color:var(--blue);font-size:14px;line-height:1;margin-left:-1px}
  .pb{overflow:visible}
  .ph{position:sticky;top:calc(var(--top) + env(safe-area-inset-top,0px));z-index:4;background:var(--paper) var(--grain);padding-left:14px}
  .wr.hd,.tr.hd{top:calc(var(--top) + var(--hd) + env(safe-area-inset-top,0px))}
@@ -183,9 +190,9 @@ label{display:block;font-size:12px;font-weight:700;color:var(--blue);margin:16px
 <div id="app" hidden>
 <header class="top"><span class="logo">SHSH</span><svg class="hrt" viewBox="0 0 24 24" aria-hidden="true"><use href="#ht"/></svg><span class="sub">SHORT SHORT</span><span class="sp"></span>
  <div class="tb"><button class="bt" id="inst" hidden>설치</button><button class="bt" id="out">로그아웃</button><button class="bt icb" id="rld" title="새로고침" aria-label="새로고침">↻</button></div></header>
-<div id="grid">
+<div id="grid" data-p="w">
  <section class="pane" id="pw"><div class="ph" id="wph"></div><div class="pb" id="wb"></div><div class="pb" id="we" hidden></div><div class="pf" id="wpf" hidden><button class="bt" data-a="cancel">취소</button><button class="pri" data-a="save">저장</button></div></section>
- <section class="pane" id="pt"><div class="ph"><h2>태그</h2><span class="n" id="tn"></span><span class="sp"></span><div class="seg" data-v="t"><button data-m="t">표</button><button data-m="b">블록</button></div><button class="add" id="addT">+ 태그</button></div><div class="pb" id="tb"></div></section>
+ <section class="pane" id="pt"><div class="ph"><button class="sw" data-a="sw" aria-label="작품으로 바꾸기"><h2>태그</h2><span class="n" id="tn"></span><i aria-hidden="true">⇄</i></button><span class="sp"></span><div class="seg" data-v="t"><button data-m="t">표</button><button data-m="b">블록</button></div><button class="add" id="addT">+ 태그</button></div><div class="pb" id="tb"></div></section>
 </div>
 </div>
 <div id="toast"></div>
@@ -196,7 +203,9 @@ label{display:block;font-size:12px;font-weight:700;color:var(--blue);margin:16px
 <script>
 const $=s=>document.querySelector(s),E=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const LSV='shsh:view';
-const S={works:[],tags:[],refs:[],wt:new Map(),ft:null,view:{w:'t',t:'b'},ed:null,et:null,mg:false,newT:false,wy:0};
+const S={works:[],tags:[],refs:[],wt:new Map(),ft:null,view:{w:'t',t:'b'},ed:null,et:null,mg:false,newT:false,wy:0,pane:'w',py:{w:0,t:0}};
+/* 좁은 화면에서 보이는 영역(w 작품 / t 태그). 바꿀 때 영역마다 보던 위치를 기억해요 */
+function setPane(p){if(p===S.pane)return;if(narrow())S.py[S.pane]=scrollY;S.pane=p;$('#grid').dataset.p=p;if(narrow())scrollTo(0,S.py[p]||0)}
 try{Object.assign(S.view,JSON.parse(localStorage.getItem(LSV)||'{}'))}catch(e){}
 let toastT;function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('on');clearTimeout(toastT);toastT=setTimeout(()=>t.classList.remove('on'),2400)}
 const uid=()=>Core.ses()?.user?.id;
@@ -233,7 +242,7 @@ function RW(){const ph=$('#wph');
  if(S.ed){ph.innerHTML=`<h2>${S.ed.id?'작품 수정':'새 작품'}</h2><span class="sp"></span>${S.ed.id?`<button class="bt icb" data-a="rm" title="작품 삭제" aria-label="작품 삭제">${trashSvg}</button>`:''}`;return}
  const ft=S.ft&&tById(S.ft);if(S.ft&&!ft)S.ft=null;
  const L=sortW(ft?S.works.filter(w=>S.wt.get(w.id)?.has(ft.id)):S.works);
- ph.innerHTML=`<h2>작품</h2><span class="n">${ft?`${L.length}/${S.works.length}`:S.works.length}</span>${ft?`<span class="flt" title="${E(ft.name)}"><span>#${E(ft.name)}</span><button data-a="unf" aria-label="태그 거르기 풀기">×</button></span>`:''}<span class="sp"></span><div class="seg" data-v="w"><button data-m="t">표</button><button data-m="b">블록</button></div><button class="add" data-a="new">+ 작품</button>`;
+ ph.innerHTML=`<button class="sw" data-a="sw" aria-label="태그로 바꾸기"><h2>작품</h2><span class="n">${ft?`${L.length}/${S.works.length}`:S.works.length}</span><i aria-hidden="true">⇄</i></button>${ft?`<span class="flt" title="${E(ft.name)}"><span>#${E(ft.name)}</span><button data-a="unf" aria-label="태그 거르기 풀기">×</button></span>`:''}<span class="sp"></span><div class="seg" data-v="w"><button data-m="t">표</button><button data-m="b">블록</button></div><button class="add" data-a="new">+ 작품</button>`;
  segOn();
  const b=$('#wb');
  if(!S.works.length){b.innerHTML=`<div class="emp">${heartSvg}아직 작품이 없어요.<br>「+ 작품」으로 시작해요.</div>`;return}
@@ -259,7 +268,8 @@ function RT(){const T=sortT(),b=$('#tb');$('#tn').textContent=S.tags.length;segO
 $('#grid').addEventListener('click',async e=>{const t=e.target;
  const sg=t.closest('.seg [data-m]');if(sg){S.view[sg.parentNode.dataset.v]=sg.dataset.m;try{localStorage.setItem(LSV,JSON.stringify(S.view))}catch(x){}R();return}
  if(t.closest('#we'))return;
- const f=t.closest('[data-ft]');if(f){S.ft=S.ft===f.dataset.ft?null:f.dataset.ft;if(S.ed)RT();else R();return}
+ if(t.closest('[data-a=sw]')){if(narrow())setPane(S.pane==='w'?'t':'w');return}
+ const f=t.closest('[data-ft]');if(f){const fromT=!!f.closest('#pt');S.ft=S.ft===f.dataset.ft?null:f.dataset.ft;if(S.ed)RT();else R();if(fromT&&S.ft&&!S.ed&&narrow()){S.py.w=0;setPane('w')}return}
  const et=t.closest('[data-et]');if(et){S.et=et.dataset.et;S.newT=false;S.mg=false;RT();return}
  const w=t.closest('[data-w]');if(w){openEd(w.dataset.w);return}
  const a=t.closest('[data-a]')?.dataset.a;if(!a)return;
@@ -313,7 +323,7 @@ function readEd(){const d=S.ed,f=$('#we');if(!d||!f.querySelector('.ti'))return 
  d.title=f.querySelector('.ti').value;d.pub_date=f.querySelector('[data-f=pub_date]').value||null;d.length=f.querySelector('[data-f=length]').value;
  d.author_id=f.querySelector('#eA').value||null;d.publisher_id=f.querySelector('#eP').value||null;return d}
 const dirty=()=>!!S.ed&&edSnap(readEd())!==edSnap(S.ed.o);
-function openEd(id){if(S.ed&&S.ed.id===id&&id)return;
+function openEd(id){if(narrow()&&S.pane!=='w'){S.py.t=scrollY;S.pane='w';$('#grid').dataset.p='w'}if(S.ed&&S.ed.id===id&&id)return;
  if(dirty()&&!confirm('저장하지 않은 내용이 있어요. 버리고 넘어갈까요?'))return;
  const w=id?wById(id):null;if(id&&!w)return;
  if(!S.ed)S.wy=narrow()?scrollY:$('#wb').scrollTop;
