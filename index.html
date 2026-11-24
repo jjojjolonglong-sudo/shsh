@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="ko"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>shsh 초단편</title>
+<script src="https://jjojjolonglong-sudo.github.io/mnmn/fonts.v1.js" data-app="shsh"></script>
+<link rel="manifest" href="manifest.webmanifest"><link rel="icon" type="image/png" href="icon-192.png"><link rel="apple-touch-icon" href="apple-touch-icon.png"><meta name="theme-color" content="#f6f5f2"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="shsh">
+<script src="https://jjojjolonglong-sudo.github.io/mnmn/config.js"></script>
+<script src="https://jjojjolonglong-sudo.github.io/mnmn/core.v1.js" data-app="shsh"></script>
+<style>
+/* 콘셉트: 각진 모서리, 1px 가는 선, 연한 종이색 바탕, 녹슨 주황(러스트) 포인트 하나. 폭은 1920의 절반(960px) */
+:root{--bg:#f6f5f2;--sf:#fff;--ink:#1f1d1a;--mut:#86807a;--ln:#e1ddd6;--ac:#a8471a;--acs:#f3e6de;--top:48px;--hd:42px}
+@media (prefers-color-scheme:dark){:root{--bg:#161514;--sf:#1e1c1a;--ink:#ebe7e1;--mut:#958d85;--ln:#312e2a;--ac:#e07a48;--acs:#3a2419}}
+[hidden]{display:none!important}
+*{box-sizing:border-box;border-radius:0}
+html,body{overscroll-behavior:none}
+body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.5 system-ui,-apple-system,'Apple SD Gothic Neo','Malgun Gothic',sans-serif;-webkit-text-size-adjust:100%}
+button,input{font:inherit;color:inherit;background:var(--sf);border:1px solid var(--ln);padding:6px 9px;min-width:0}
+button{cursor:pointer;white-space:nowrap;line-height:1.3}
+@media(hover:hover){button:hover{border-color:var(--ink)}}
+button.pri{background:var(--ink);color:var(--bg);border-color:var(--ink);font-weight:700}
+button.del{color:var(--ac)}
+input{width:100%}
+:focus-visible{outline:2px solid var(--ac);outline-offset:-1px}
+label{display:block;font-size:12px;color:var(--mut);margin:14px 0 4px}
+.mut{color:var(--mut)}
+
+/* 전체: 가운데 960px 한 덩어리 */
+#app{max-width:960px;margin:0 auto;height:100vh;height:100dvh;display:flex;flex-direction:column;border-left:1px solid var(--ln);border-right:1px solid var(--ln)}
+.top{flex:none;height:calc(var(--top) + env(safe-area-inset-top,0px));padding:env(safe-area-inset-top,0px) 10px 0 16px;display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--ink)}
+.logo{font-weight:800;font-size:18px;color:var(--ac);letter-spacing:.04em}
+.top .sub{font-size:12px;color:var(--mut)}
+.sp{flex:1}
+.tb{display:flex;gap:6px}
+.tb button{height:32px;padding:0 10px;font-size:13px}
+.tb .ic{width:32px;padding:0;font-size:16px;line-height:1}
+
+/* 작품 | 태그 두 영역 (각자 스크롤) */
+#grid{flex:1;min-height:0;display:grid;grid-template-columns:minmax(0,1.62fr) minmax(0,1fr)}
+.pane{min-height:0;display:flex;flex-direction:column}
+.pane+.pane{border-left:1px solid var(--ln)}
+.ph{flex:none;height:var(--hd);display:flex;align-items:center;gap:8px;padding:0 12px 0 16px;border-bottom:1px solid var(--ln)}
+.ph h2{margin:0;font-size:14px}
+.ph .n{font-size:12px;color:var(--mut)}
+.ph .flt{display:inline-flex;align-items:center;gap:2px;font-size:12px;color:var(--ac);border:1px solid var(--ac);padding:0 0 0 7px;height:24px;max-width:150px}
+.ph .flt span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ph .flt button{border:0;background:none;color:var(--ac);padding:0 6px;height:22px}
+.seg{display:flex}.seg button{height:26px;padding:0 9px;font-size:12px}.seg button+button{margin-left:-1px}
+.seg button.on{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.ph .add{height:26px;padding:0 10px;font-size:12px}
+.pb{flex:1;min-height:0;overflow:auto;overscroll-behavior:none}
+.emp{color:var(--mut);padding:36px 16px;text-align:center;font-size:13px;line-height:1.7}
+
+/* 작품 — 표 */
+.wr{display:grid;grid-template-columns:84px minmax(0,1fr) 62px minmax(0,1.05fr);align-items:baseline;gap:0 10px;padding:8px 12px 8px 16px;border-bottom:1px solid var(--ln);cursor:pointer}
+.wr.hd{position:sticky;top:0;z-index:1;background:var(--bg);cursor:default;padding-top:6px;padding-bottom:6px;font-size:11.5px;color:var(--mut);border-bottom-color:var(--ink)}
+@media(hover:hover){.wr:not(.hd):hover{background:var(--sf)}}
+.wr .d{font-size:12.5px;color:var(--mut);font-variant-numeric:tabular-nums}
+.wr .t{font-weight:600;overflow-wrap:anywhere}
+.wr .l{font-size:12.5px;text-align:right;font-variant-numeric:tabular-nums;color:var(--mut)}
+.wr.hd .l{text-align:right}
+.chips{display:flex;flex-wrap:wrap;gap:3px}
+.chip{font-size:11.5px;line-height:18px;padding:0 6px;border:1px solid var(--ln);background:var(--sf);color:var(--ink);cursor:pointer;white-space:nowrap}
+.chip.on{border-color:var(--ac);color:var(--ac);background:var(--acs)}
+@media(hover:hover){.chip:hover{border-color:var(--ac)}}
+/* 작품 — 블록 */
+.wb{display:grid;grid-template-columns:repeat(auto-fill,minmax(176px,1fr));gap:10px;padding:12px 12px 16px 16px}
+.wc{background:var(--sf);border:1px solid var(--ln);padding:9px 10px 10px;cursor:pointer;display:flex;flex-direction:column;gap:6px;min-height:96px}
+@media(hover:hover){.wc:hover{border-color:var(--ink)}}
+.wc .t{font-weight:700;line-height:1.4;overflow-wrap:anywhere}
+.wc .m{font-size:12px;color:var(--mut);font-variant-numeric:tabular-nums}
+.wc .chips{margin-top:auto}
+
+/* 태그 — 표 */
+.tr{display:grid;grid-template-columns:minmax(0,.9fr) 28px minmax(0,1.5fr);align-items:baseline;gap:0 8px;padding:8px 12px 8px 16px;border-bottom:1px solid var(--ln)}
+.tr.hd{position:sticky;top:0;z-index:1;background:var(--bg);padding-top:6px;padding-bottom:6px;font-size:11.5px;color:var(--mut);border-bottom-color:var(--ink)}
+.tr .nm,.tb2 .nm{font-weight:700;cursor:pointer;overflow-wrap:anywhere;text-align:left;border:0;background:none;padding:0}
+.tr .nm.on,.tb2 .nm.on{color:var(--ac)}
+.tr .c{font-size:12.5px;text-align:right;font-variant-numeric:tabular-nums}
+.tr .ws{font-size:12px;color:var(--mut);line-height:1.55}
+.wl{cursor:pointer}
+@media(hover:hover){.wl:hover{color:var(--ac);text-decoration:underline}}
+.ed{border:0;background:none;padding:0 2px;color:var(--mut);font-size:12px;cursor:pointer}
+@media(hover:hover){.ed:hover{color:var(--ac)}}
+/* 태그 — 블록 */
+.tbk{padding:12px 12px 16px 16px;display:flex;flex-direction:column;gap:10px}
+.tb2{background:var(--sf);border:1px solid var(--ln)}
+.tb2 .h{display:flex;align-items:baseline;gap:6px;padding:7px 10px 6px;border-bottom:1px solid var(--ln)}
+.tb2 .h .nm{flex:1;min-width:0}
+.tb2 .h .c{font-size:12px;color:var(--mut);font-variant-numeric:tabular-nums}
+.tb2.on{border-color:var(--ac)}
+.tb2 ul{list-style:none;margin:0;padding:5px 10px 7px}
+.tb2 li{font-size:12.5px;display:flex;gap:8px;padding:2px 0}
+.tb2 li .wl{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tb2 li small{color:var(--mut);font-variant-numeric:tabular-nums}
+.tb2 .z{font-size:12px;color:var(--mut);padding:6px 10px}
+/* 새 태그 입력 줄 */
+.nt{display:flex;gap:6px;padding:10px 12px 10px 16px;border-bottom:1px solid var(--ln)}
+.nt input{height:30px;padding:3px 8px}
+.nt button{height:30px;padding:0 10px;font-size:12px}
+
+/* 휴대폰: 위아래로 쌓고 페이지 전체 스크롤 */
+@media(max-width:720px){
+ #app{height:auto;min-height:100dvh;border:0}
+ .top{position:sticky;top:0;z-index:5;background:var(--bg)}
+ #grid{display:block}
+ .pane+.pane{border-left:0;border-top:1px solid var(--ink);margin-top:18px}
+ .pb{overflow:visible}
+ .ph{position:sticky;top:calc(var(--top) + env(safe-area-inset-top,0px));z-index:4;background:var(--bg)}
+ .wr.hd,.tr.hd{top:calc(var(--top) + var(--hd) + env(safe-area-inset-top,0px))}
+ .wr{grid-template-columns:74px minmax(0,1fr) 54px;padding-left:14px}
+ .wr .tg{grid-column:2/4}.wr.hd .tg{display:none}.wr .tg:empty{display:none}
+ .wr .tg{margin-top:4px}
+ .wb{grid-template-columns:repeat(auto-fill,minmax(150px,1fr));padding-left:14px}
+ .ph{padding-left:14px}.tr,.nt,.tbk{padding-left:14px}
+ #grid{padding-bottom:calc(48px + env(safe-area-inset-bottom,0px))}
+}
+
+/* 편집 창: 바깥을 누르면 닫힘, 닫기 버튼은 아래 고정 */
+.mdl{position:fixed;inset:0;z-index:30;background:rgba(20,18,16,.38);display:flex;align-items:center;justify-content:center;padding:16px}
+.box{width:min(440px,100%);max-height:calc(100dvh - 32px);background:var(--bg);border:1px solid var(--ink);display:flex;flex-direction:column}
+.box .bh{display:flex;align-items:center;gap:8px;padding:10px 16px;border-bottom:1px solid var(--ln);font-size:13px}
+.box .bh b{color:var(--ac)}
+.box .bh .sv{margin-left:auto;font-size:12px;color:var(--mut)}
+.box .bb{flex:1;overflow:auto;padding:2px 16px 18px}
+.box .bf{display:flex;gap:8px;padding:10px 16px calc(10px + env(safe-area-inset-bottom,0px));border-top:1px solid var(--ln)}
+.box .bf button{height:38px}.box .bf .x{flex:1}.box .bf .del{padding:0 14px}
+.box input.ti{font-size:17px;font-weight:700;border-color:transparent;border-bottom-color:var(--ink);padding:6px 2px;background:none;margin-top:12px}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:0 10px}
+.lw{position:relative}.lw input{padding-right:28px}.lw span{position:absolute;right:9px;top:50%;transform:translateY(-50%);font-size:12px;color:var(--mut);pointer-events:none}
+/* 태그 고르기: 타이핑 → 걸러진 목록(↑↓), 엔터 → 고른 것 / 같은 이름 / 없으면 새 태그 */
+.ti2{position:relative}
+.tbx{display:flex;flex-wrap:wrap;gap:4px;align-items:center;background:var(--sf);border:1px solid var(--ln);padding:5px 6px;min-height:38px;cursor:text}
+.tbx:focus-within{border-color:var(--ink)}
+.tbx .chip{cursor:default;display:inline-flex;align-items:center;gap:2px;padding-right:0;line-height:22px;border-color:var(--ac);color:var(--ac);background:var(--acs)}
+.tbx .chip button{border:0;background:none;color:var(--ac);padding:0 6px;line-height:20px;font-size:13px}
+.tbx input{border:0;background:none;padding:2px 3px;flex:1;min-width:90px;width:auto}
+.tbx input:focus-visible{outline:0}
+.tls{position:absolute;left:0;right:0;top:100%;z-index:2;background:var(--sf);border:1px solid var(--ink);border-top:0;max-height:220px;overflow:auto}
+.tls div{padding:6px 9px;font-size:13px;display:flex;gap:8px;cursor:pointer}
+.tls div small{margin-left:auto;color:var(--mut)}
+.tls div.hi{background:var(--acs);color:var(--ac)}
+.tls div.new{color:var(--ac)}
+.hint{font-size:11.5px;color:var(--mut);margin-top:5px}
+.box .wls{margin-top:6px;border-top:1px solid var(--ln)}
+.box .wls div{display:flex;gap:8px;padding:6px 0;border-bottom:1px solid var(--ln);font-size:13px;cursor:pointer}
+.box .wls div small{margin-left:auto;color:var(--mut);font-variant-numeric:tabular-nums}
+@media(hover:hover){.box .wls div:hover{color:var(--ac)}}
+
+#login{max-width:320px;margin:20vh auto 0;padding:0 16px}#login .logo{font-size:30px;display:block;text-align:center}
+#lmsg{color:var(--ac);font-size:13px;min-height:18px;margin:8px 0 0}
+#toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:8px 14px;font-size:13px;z-index:40;opacity:0;transition:opacity .2s;pointer-events:none;white-space:nowrap}
+#toast.on{opacity:1}
+</style></head><body>
+<div id="login" hidden><span class="logo">shsh</span><p class="mut" style="text-align:center;margin-bottom:18px">초단편 컨셉 정리</p><label>이메일</label><input id="lem" type="email" autocomplete="username"><label>비밀번호</label><input id="lpw" type="password" autocomplete="current-password"><button class="pri" id="go" style="margin-top:14px;width:100%">로그인</button><p id="lmsg"></p></div>
+<div id="app" hidden>
+<header class="top"><span class="logo">shsh</span><span class="sub">초단편 컨셉</span><span class="sp"></span>
+ <div class="tb"><button id="inst" hidden>설치</button><button id="out">로그아웃</button><button class="ic" id="rld" title="새로고침" aria-label="새로고침">↻</button></div></header>
+<div id="grid">
+ <section class="pane" id="pw"><div class="ph"><h2>작품</h2><span class="n" id="wn"></span><span id="wf"></span><span class="sp"></span><div class="seg" data-v="w"><button data-m="t">표</button><button data-m="b">블록</button></div><button class="add" id="addW">+ 작품</button></div><div class="pb" id="wb"></div></section>
+ <section class="pane" id="pt"><div class="ph"><h2>태그</h2><span class="n" id="tn"></span><span class="sp"></span><div class="seg" data-v="t"><button data-m="t">표</button><button data-m="b">블록</button></div><button class="add" id="addT">+ 태그</button></div><div class="pb" id="tb"></div></section>
+</div>
+</div>
+<div id="toast"></div>
+<script>
+const $=s=>document.querySelector(s),E=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const LSV='shsh:view';
+const S={works:[],tags:[],wt:new Map(),ft:null,view:{w:'t',t:'b'},m:null,newT:false};
+try{Object.assign(S.view,JSON.parse(localStorage.getItem(LSV)||'{}'))}catch(e){}
+let toastT;function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('on');clearTimeout(toastT);toastT=setTimeout(()=>t.classList.remove('on'),2400)}
+const uid=()=>Core.ses()?.user?.id;
+const q=(p,o)=>Core.rest(p,o);
+const ins=(t,row)=>q(t,{method:'POST',headers:{Prefer:'return=representation'},body:JSON.stringify(Object.assign({user_id:uid()},row))}).then(r=>r[0]);
+const fmtD=d=>d?d.replace(/-/g,'.'):'';
+const fmtL=n=>n==null||n===''?'':Number(n).toLocaleString('ko-KR');
+const tById=id=>S.tags.find(t=>t.id===id);
+const wById=id=>S.works.find(w=>w.id===id);
+const tagsOf=w=>[...(S.wt.get(w.id)||[])].map(tById).filter(Boolean).sort((a,b)=>cnt(b)-cnt(a)||a.name.localeCompare(b.name,'ko'));
+const worksOf=t=>sortW(S.works.filter(w=>S.wt.get(w.id)?.has(t.id)));
+function cnt(t){let n=0;S.wt.forEach(s=>{if(s.has(t.id))n++});return n}
+/* 작품: 출간일 최신순(출간일 없는 작품은 맨 위 — 쓰는 중), 같으면 늦게 넣은 것 위 */
+function sortW(a){return a.slice().sort((x,y)=>{if(!x.pub_date!==!y.pub_date)return x.pub_date?1:-1;if(x.pub_date!==y.pub_date)return x.pub_date<y.pub_date?1:-1;return x.created_at<y.created_at?1:-1})}
+/* 태그: 작품 수 많은 순, 같으면 가나다 */
+function sortT(){const c=new Map(S.tags.map(t=>[t.id,cnt(t)]));return S.tags.slice().sort((a,b)=>c.get(b.id)-c.get(a.id)||a.name.localeCompare(b.name,'ko'))}
+
+/* ---------- 자동 저장: 칸을 고치면 0.6초 뒤 바뀐 칸만 서버로 ---------- */
+const PEND={};let pt=null;
+function setSv(t){const s=document.querySelector('.box .sv');if(s)s.textContent=t}
+function patch(t,row,f,v){row[f]=v;const k=t+'|'+row.id;(PEND[k]=PEND[k]||{t,id:row.id,f:{}}).f[f]=v;setSv('저장 중…');clearTimeout(pt);pt=setTimeout(flush,600)}
+async function flush(){clearTimeout(pt);const L=Object.values(PEND);for(const k in PEND)delete PEND[k];if(!L.length)return true;
+ try{await Promise.all(L.map(x=>q(x.t+'?id=eq.'+x.id,{method:'PATCH',body:JSON.stringify(Object.assign(x.f,{updated_at:new Date().toISOString()}))})));setSv('저장됨');return true}
+ catch(e){setSv('저장 실패');toast(/duplicate|23505/.test(e.message)?'같은 이름의 태그가 이미 있어요':'저장하지 못했어요: '+e.message);
+  if(!/duplicate|23505/.test(e.message))L.forEach(x=>{const k=x.t+'|'+x.id;PEND[k]=x});return false}}
+addEventListener('pagehide',flush);document.addEventListener('visibilitychange',()=>{if(document.hidden)flush()});
+
+/* ---------- 불러오기 ---------- */
+async function load(){const [w,t,l]=await Promise.all([q('shsh_work?select=*'),q('shsh_tag?select=*'),q('shsh_work_tag?select=work_id,tag_id')]);
+ S.works=w;S.tags=t;S.wt=new Map();l.forEach(x=>{if(!S.wt.has(x.work_id))S.wt.set(x.work_id,new Set());S.wt.get(x.work_id).add(x.tag_id)});R()}
+
+/* ---------- 화면 (다시 그려도 각 영역 스크롤 위치 그대로) ---------- */
+function R(){const a=$('#wb').scrollTop,b=$('#tb').scrollTop;RW();RT();$('#wb').scrollTop=a;$('#tb').scrollTop=b;
+ document.querySelectorAll('.seg').forEach(s=>s.querySelectorAll('button').forEach(x=>x.classList.toggle('on',x.dataset.m===S.view[s.dataset.v])))}
+function chipsH(w){return tagsOf(w).map(t=>`<span class="chip${S.ft===t.id?' on':''}" data-ft="${t.id}">${E(t.name)}</span>`).join('')}
+function RW(){const ft=S.ft&&tById(S.ft);if(S.ft&&!ft)S.ft=null;
+ const L=sortW(ft?S.works.filter(w=>S.wt.get(w.id)?.has(ft.id)):S.works);
+ $('#wn').textContent=ft?`${L.length} / ${S.works.length}`:S.works.length;
+ $('#wf').innerHTML=ft?`<span class="flt" title="${E(ft.name)}"><span>#${E(ft.name)}</span><button data-a="unf" aria-label="태그 거르기 풀기">×</button></span>`:'';
+ const b=$('#wb');
+ if(!S.works.length){b.innerHTML='<p class="emp">아직 작품이 없어요.<br>「+ 작품」으로 시작해요.</p>';return}
+ if(S.view.w==='t')b.innerHTML=`<div class="wr hd"><span>출간일</span><span>제목</span><span class="l">분량</span><span class="tg">태그</span></div>`+L.map(w=>`<div class="wr" data-w="${w.id}"><span class="d">${fmtD(w.pub_date)||'—'}</span><span class="t">${E(w.title)||'<span class="mut">(제목 없음)</span>'}</span><span class="l">${fmtL(w.length)}</span><span class="tg chips">${chipsH(w)}</span></div>`).join('');
+ else b.innerHTML=`<div class="wb">`+L.map(w=>`<div class="wc" data-w="${w.id}"><span class="t">${E(w.title)||'<span class="mut">(제목 없음)</span>'}</span><span class="m">${fmtD(w.pub_date)||'출간일 없음'}${w.length!=null?' · '+fmtL(w.length)+'자':''}</span><span class="chips">${chipsH(w)}</span></div>`).join('')+`</div>`}
+function RT(){const T=sortT(),b=$('#tb');$('#tn').textContent=S.tags.length;
+ const nt=S.newT?`<div class="nt"><input id="ntin" placeholder="새 태그 이름" autocomplete="off"><button class="pri" data-a="ntok">추가</button><button data-a="ntx">취소</button></div>`:'';
+ if(!S.tags.length){b.innerHTML=nt+'<p class="emp">아직 태그가 없어요.<br>작품 편집 창에서 태그를 치고 엔터를 누르면 생겨요.</p>';return}
+ if(S.view.t==='t')b.innerHTML=nt+`<div class="tr hd"><span>태그</span><span style="text-align:right">수</span><span>작품</span></div>`+T.map(t=>{const W=worksOf(t);return `<div class="tr"><span><button class="nm${S.ft===t.id?' on':''}" data-ft="${t.id}">${E(t.name)}</button> <button class="ed" data-et="${t.id}" title="태그 고치기" aria-label="태그 고치기">✎</button></span><span class="c">${W.length}</span><span class="ws">${W.map(w=>`<span class="wl" data-w="${w.id}">${E(w.title||'(제목 없음)')}</span>`).join(' · ')||'—'}</span></div>`}).join('');
+ else b.innerHTML=nt+`<div class="tbk">`+T.map(t=>{const W=worksOf(t);return `<div class="tb2${S.ft===t.id?' on':''}"><div class="h"><button class="nm${S.ft===t.id?' on':''}" data-ft="${t.id}">${E(t.name)}</button><span class="c">${W.length}</span><button class="ed" data-et="${t.id}" title="태그 고치기" aria-label="태그 고치기">✎</button></div>${W.length?`<ul>${W.map(w=>`<li><span class="wl" data-w="${w.id}">${E(w.title||'(제목 없음)')}</span><small>${fmtD(w.pub_date)}</small></li>`).join('')}</ul>`:'<div class="z">이 태그를 단 작품이 없어요</div>'}</div>`}).join('')+`</div>`}
+
+/* ---------- 누르기 ---------- */
+document.querySelectorAll('.seg').forEach(s=>s.addEventListener('click',e=>{const m=e.target.closest('[data-m]');if(!m)return;S.view[s.dataset.v]=m.dataset.m;try{localStorage.setItem(LSV,JSON.stringify(S.view))}catch(x){}R()}));
+$('#grid').addEventListener('click',async e=>{const t=e.target;
+ const f=t.closest('[data-ft]');if(f){S.ft=S.ft===f.dataset.ft?null:f.dataset.ft;R();return}
+ const et=t.closest('[data-et]');if(et){openTag(et.dataset.et);return}
+ const w=t.closest('[data-w]');if(w){openWork(w.dataset.w);return}
+ const a=t.closest('[data-a]')?.dataset.a;
+ if(a==='unf'){S.ft=null;R()}
+ if(a==='ntx'){S.newT=false;R()}
+ if(a==='ntok')addTagFromRow();
+});
+$('#grid').addEventListener('keydown',e=>{if(e.target.id==='ntin'){if(e.key==='Enter'&&!e.isComposing){e.preventDefault();addTagFromRow()}if(e.key==='Escape'){S.newT=false;R()}}});
+$('#addT').onclick=()=>{S.newT=true;R();const i=$('#ntin');i&&i.focus()};
+async function addTagFromRow(){const i=$('#ntin'),n=i.value.trim();if(!n)return;
+ if(S.tags.some(t=>t.name===n)){toast('이미 있는 태그예요');i.select();return}
+ try{const r=await ins('shsh_tag',{name:n});S.tags.push(r);R();const j=$('#ntin');j&&j.focus()}catch(x){toast('만들지 못했어요: '+x.message)}}
+$('#addW').onclick=async()=>{try{const r=await ins('shsh_work',{title:''});S.works.push(r);if(S.ft){await linkTag(r,S.ft)}R();openWork(r.id,true)}catch(x){toast('만들지 못했어요: '+x.message)}};
+
+/* ---------- 작품↔태그 연결 ---------- */
+async function linkTag(w,tid){if(!S.wt.has(w.id))S.wt.set(w.id,new Set());if(S.wt.get(w.id).has(tid))return;S.wt.get(w.id).add(tid);
+ try{await q('shsh_work_tag',{method:'POST',headers:{Prefer:'return=minimal'},body:JSON.stringify({work_id:w.id,tag_id:tid,user_id:uid()})})}catch(x){S.wt.get(w.id).delete(tid);toast('태그를 달지 못했어요: '+x.message)}}
+async function unlinkTag(w,tid){S.wt.get(w.id)?.delete(tid);
+ try{await q(`shsh_work_tag?work_id=eq.${w.id}&tag_id=eq.${tid}`,{method:'DELETE'})}catch(x){S.wt.get(w.id).add(tid);toast('태그를 빼지 못했어요: '+x.message)}}
+
+/* ---------- 편집 창 ---------- */
+function closeM(){if(!S.m)return;const m=S.m;S.m=null;document.querySelector('.mdl')?.remove();
+ flush().then(async()=>{/* 제목·출간일·분량이 모두 빈 작품은 지움(태그만 달린 것도) */
+  if(m.t==='w'){const w=wById(m.id);if(w&&!(w.title||'').trim()&&!w.pub_date&&w.length==null){try{await q('shsh_work?id=eq.'+w.id,{method:'DELETE'});S.works=S.works.filter(x=>x.id!==w.id);S.wt.delete(w.id)}catch(x){}}}
+  R()})}
+function mount(h){document.querySelector('.mdl')?.remove();const d=document.createElement('div');d.className='mdl';d.innerHTML=`<div class="box">${h}</div>`;
+ d.addEventListener('mousedown',e=>{d._down=e.target===d});d.addEventListener('click',e=>{if(e.target===d&&d._down)closeM()});document.body.appendChild(d);return d}
+addEventListener('keydown',e=>{if(e.key==='Escape'&&S.m&&!document.querySelector('.tls'))closeM()});
+
+function openWork(id,fresh){const w=wById(id);if(!w)return;S.m={t:'w',id};
+ const d=mount(`<div class="bh"><b>${fresh?'새 작품':'작품'}</b><span class="sv"></span></div>
+ <div class="bb">
+  <input class="ti" data-f="title" value="${E(w.title)}" placeholder="제목" autocomplete="off">
+  <div class="g2"><div><label>출간일</label><input type="date" data-f="pub_date" value="${w.pub_date||''}" min="1900-01-01" max="9999-12-31"></div>
+  <div><label>분량</label><div class="lw"><input data-f="length" inputmode="numeric" value="${fmtL(w.length)}" placeholder="0" autocomplete="off"><span>자</span></div></div></div>
+  <label>태그</label><div class="ti2"><div class="tbx" id="tbx"></div></div>
+  <p class="hint">타이핑하면 목록이 걸러져요(↑↓). 엔터 → 골라진 태그를 달아요. 새로 만들려면 목록 맨 아래 ＋ 새 태그.</p>
+ </div>
+ <div class="bf"><button class="del" data-a="rm">삭제</button><button class="x" data-a="x">닫기</button></div>`);
+ drawTbx(w);
+ d.addEventListener('input',e=>{const f=e.target.dataset.f;if(!f)return;let v=e.target.value;
+  if(f==='length'){const n=v.replace(/[^\d]/g,'');const c=e.target.selectionStart,before=v.length;e.target.value=n?Number(n).toLocaleString('ko-KR'):'';
+   try{const p=Math.max(0,c+(e.target.value.length-before));e.target.setSelectionRange(p,p)}catch(x){}v=n?+n:null}
+  if(f==='pub_date')v=v||null;
+  patch('shsh_work',w,f,v);softR()});
+ d.addEventListener('click',async e=>{const a=e.target.closest('[data-a]')?.dataset.a;if(!a)return;
+  if(a==='x')closeM();
+  if(a==='rm'){if(!confirm(`「${w.title||'제목 없음'}」을 지울까요? 되돌릴 수 없어요.`))return;
+   for(const k in PEND)if(k.endsWith('|'+w.id))delete PEND[k];
+   try{await q('shsh_work?id=eq.'+w.id,{method:'DELETE'});S.works=S.works.filter(x=>x.id!==w.id);S.wt.delete(w.id);S.m=null;d.remove();R()}catch(x){toast('지우지 못했어요: '+x.message)}}});
+ if(fresh)setTimeout(()=>d.querySelector('.ti').focus(),20)}
+let srT;function softR(){clearTimeout(srT);srT=setTimeout(R,250)}
+
+/* 태그 고르기 칸 */
+function drawTbx(w){const box=$('#tbx');if(!box)return;const keep=box.querySelector('input')?.value||'';
+ box.innerHTML=tagsOf(w).map(t=>`<span class="chip">${E(t.name)}<button data-rt="${t.id}" aria-label="${E(t.name)} 빼기">×</button></span>`).join('')+`<input id="tin" placeholder="${tagsOf(w).length?'':'태그 입력'}" autocomplete="off">`;
+ const inp=box.querySelector('input');inp.value=keep;let hi=-1,items=[];
+ const close=()=>{box.parentNode.querySelector('.tls')?.remove()};
+ /* 목록: 같은 이름 → 앞글자가 같은 것 → 작품 수 순. 타이핑 중이면 첫 줄이 골라져 있음(공용 고르기 칸과 같게) */
+ const show=(keepHi)=>{close();const raw=inp.value.trim(),v=raw.toLowerCase(),has=S.wt.get(w.id)||new Set();
+  let L=sortT().filter(t=>!has.has(t.id)&&(!v||t.name.toLowerCase().includes(v)));
+  if(v)L.sort((a,b)=>{const A=a.name.toLowerCase(),B=b.name.toLowerCase();return (B===v)-(A===v)||B.startsWith(v)-A.startsWith(v)});
+  const exact=S.tags.some(t=>t.name.toLowerCase()===v);
+  items=L.map(t=>({t}));if(v&&!exact)items.push({n:raw});
+  if(!keepHi)hi=v&&items.length?0:-1;if(hi>=items.length)hi=items.length-1;
+  if(!items.length)return;
+  const el=document.createElement('div');el.className='tls';
+  el.innerHTML=items.map((x,i)=>x.t?`<div data-i="${i}" class="${i===hi?'hi':''}">${E(x.t.name)}<small>${cnt(x.t)}</small></div>`:`<div data-i="${i}" class="new${i===hi?' hi':''}">＋ 새 태그 「${E(x.n)}」</div>`).join('');
+  el.addEventListener('mousedown',e=>{e.preventDefault();const d=e.target.closest('[data-i]');if(d)choose(items[+d.dataset.i])});
+  box.parentNode.appendChild(el);el.querySelector('.hi')?.scrollIntoView({block:'nearest'})};
+ const choose=x=>x&&(x.t?commit(x.t):commit(null,x.n));
+ async function commit(t,name){if(!t&&name){t=S.tags.find(x=>x.name.toLowerCase()===name.toLowerCase());
+   if(!t){try{t=await ins('shsh_tag',{name});S.tags.push(t)}catch(x){toast('태그를 만들지 못했어요: '+x.message);return}}}
+  if(!t)return;inp.value='';hi=-1;await linkTag(w,t.id);drawTbx(w);R();$('#tin')?.focus()}
+ inp.addEventListener('focus',()=>show());
+ inp.addEventListener('blur',()=>setTimeout(close,120));
+ inp.addEventListener('input',()=>show());
+ inp.addEventListener('keydown',e=>{if(e.isComposing)return;
+  if(e.key==='ArrowDown'||e.key==='ArrowUp'){e.preventDefault();if(!items.length)return;const n=items.length;hi=hi<0?(e.key==='ArrowDown'?0:n-1):(hi+(e.key==='ArrowDown'?1:n-1))%n;show(true)}
+  else if(e.key==='Enter'||e.key===','){e.preventDefault();const v=inp.value.trim();if(!v)return;
+   if(hi>=0&&items[hi])choose(items[hi]);else{const ex=S.tags.find(t=>t.name.toLowerCase()===v.toLowerCase());commit(ex||null,v)}}
+  else if(e.key==='Escape'){if(box.parentNode.querySelector('.tls')){e.stopPropagation();close()}}
+  else if(e.key==='Backspace'&&!inp.value){const T=tagsOf(w);if(T.length){unlinkTag(w,T[T.length-1].id).then(()=>{drawTbx(w);R();$('#tin')?.focus()})}}});
+ box.onclick=async e=>{const r=e.target.closest('[data-rt]');if(r){await unlinkTag(w,r.dataset.rt);drawTbx(w);R();$('#tin')?.focus();return}if(e.target===box)inp.focus()}}
+
+function openTag(id){const t=tById(id);if(!t)return;S.m={t:'t',id};const W=worksOf(t);
+ const d=mount(`<div class="bh"><b>태그</b><span class="mut">작품 ${W.length}개</span><span class="sv"></span></div>
+ <div class="bb"><input class="ti" data-f="name" value="${E(t.name)}" placeholder="태그 이름" autocomplete="off">
+  <label>이 태그를 단 작품</label><div class="wls">${W.map(w=>`<div data-w="${w.id}"><span>${E(w.title||'(제목 없음)')}</span><small>${fmtD(w.pub_date)}</small></div>`).join('')||'<p class="mut" style="font-size:13px">아직 없어요.</p>'}</div></div>
+ <div class="bf"><button class="del" data-a="rm">삭제</button><button class="x" data-a="x">닫기</button></div>`);
+ d.addEventListener('input',e=>{if(e.target.dataset.f!=='name')return;const v=e.target.value.trim();if(!v)return;
+  if(S.tags.some(x=>x.id!==t.id&&x.name===v)){setSv('같은 이름 있음');return}patch('shsh_tag',t,'name',v);softR()});
+ d.addEventListener('click',async e=>{const w=e.target.closest('[data-w]');if(w){await flush();d.remove();S.m=null;openWork(w.dataset.w);return}
+  const a=e.target.closest('[data-a]')?.dataset.a;if(a==='x')closeM();
+  if(a==='rm'){if(!confirm(`태그 「${t.name}」을 지울까요?${W.length?`\n작품 ${W.length}개에서 이 태그가 빠져요(작품은 그대로).`:''}`))return;
+   for(const k in PEND)if(k.endsWith('|'+t.id))delete PEND[k];
+   try{await q('shsh_tag?id=eq.'+t.id,{method:'DELETE'});S.tags=S.tags.filter(x=>x.id!==t.id);S.wt.forEach(s=>s.delete(t.id));if(S.ft===t.id)S.ft=null;S.m=null;d.remove();R()}catch(x){toast('지우지 못했어요: '+x.message)}}})}
+
+/* ---------- 로그인 ---------- */
+async function show(){const on=!!Core.ses();$('#login').hidden=on;$('#app').hidden=!on;if(!on)return;
+ try{await load()}catch(e){toast(e.message);if(/로그인/.test(e.message)){await Core.logout();show()}}}
+$('#go').onclick=async()=>{$('#lmsg').textContent='';try{await Core.login($('#lem').value.trim(),$('#lpw').value);show()}catch(e){$('#lmsg').textContent=e.message}};
+$('#lpw').addEventListener('keydown',e=>{if(e.key==='Enter')$('#go').click()});
+$('#out').onclick=async()=>{await flush();await Core.logout();location.reload()};
+$('#rld').onclick=async()=>{await flush();location.reload()};
+
+/* 📲 설치: 크롬이 허락하면 바로 설치, 아니면 방법 안내. 설치된 앱으로 열면 숨김 */
+let dp=null;const standalone=matchMedia('(display-mode: standalone)').matches||navigator.standalone;
+$('#inst').hidden=standalone;
+addEventListener('beforeinstallprompt',e=>{e.preventDefault();dp=e});
+addEventListener('appinstalled',()=>{dp=null;$('#inst').hidden=true});
+$('#inst').onclick=async()=>{if(dp){dp.prompt();await dp.userChoice;dp=null;return}
+ let had=false;try{had=navigator.getInstalledRelatedApps&&(await navigator.getInstalledRelatedApps()).length>0}catch(e){}
+ alert(/iphone|ipad|ipod/i.test(navigator.userAgent)?'아이폰: 사파리 아래 공유 버튼 → "홈 화면에 추가"를 누르세요.'
+  :(had?'shsh가 이미 이 기기에 설치돼 있어요.\n':'')+'지금은 바로 설치할 수 없어요.\n이미 깔려 있다면 기존 shsh를 지우고 이 페이지를 새로고침하면 설치 버튼이 동작해요.\n또는 크롬 메뉴(⋮) → "앱 설치"를 눌러도 돼요.')};
+if(window.Core)show();else{$('#login').hidden=false;$('#lmsg').textContent='공용 파일(core)을 불러오지 못했어요. 새로고침해 주세요.'}
+if('serviceWorker'in navigator)navigator.serviceWorker.register('sw.js').catch(()=>{});
+</script></body></html>
